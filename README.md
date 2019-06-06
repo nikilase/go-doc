@@ -6,7 +6,8 @@ I hope you find it useful.
 
 ## usage:
 
-go-doc /your-source-code-folder /destination-docs-folder
+go-doc /your-source-code-folder /destination-docs-folder depth
+
 
 ## Dependencies
 

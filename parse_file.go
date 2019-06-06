@@ -5,8 +5,8 @@ import (
 	"io/ioutil"
 	"path"
 	"regexp"
+	"strconv"
 	"strings"
-    "strconv"
 )
 
 // todo avoud double highlight.
@@ -65,8 +65,20 @@ func ParseFile(fileName string) string {
 		line := lines[i]
 		if strings.HasPrefix(line, "//") {
 			line = line[2:]
-			previousComments += line + "\n<br/>"
+			if !strings.HasPrefix(line, "ToDo") && !strings.HasPrefix(line, " ToDo") {
+				previousComments += line + "\n<br/>"
+			}
 		}
+		if strings.HasPrefix(line, "const") {
+			previousComments = ""
+		}
+		if strings.HasPrefix(line, "var") {
+			previousComments = ""
+		}
+		if strings.HasPrefix(line, "type") {
+			previousComments = ""
+		}
+
 		if strings.HasPrefix(line, "func") {
 			fname := []byte(line)
 			fname = re.ReplaceAll(fname, []byte(""))
@@ -74,34 +86,36 @@ func ParseFile(fileName string) string {
 
 			mline := strings.Replace(line, "{", "", -1)
 			mline = highlight(mline)
-			foutput := "" 
+			foutput := ""
 			foutput += "<a name='" + string(fname) + "'></a><h2>" + string(fname) + "</h2>\n"
 			foutput += "<div class=blk>\n"
-			foutput += "<code>" + mline + "</code>\n"
-			foutput += "<p>\n"
+			foutput += "<p>"
 			foutput += previousComments
-			foutput += "<a href=https://github.com/NAKsir-melody/go-ethereum/tree/master/"+fileName[14:]+"#L" + strconv.Itoa(i)+">"+fileName[14:]+"#L" + strconv.Itoa(i)+"</a><br>"
+			foutput += "<br>"
+			foutput += "<code>" + mline + "</code>\n"
+			foutput += "<a href=https://github.com/nikilase/SensorWebsite/tree/master/" + fileName[48:] + "#L" + strconv.Itoa(i) + " target=\"_blank\">" + fileName[14:] + "#L" + strconv.Itoa(i) + "</a><br>"
 			foutput += "</p>\n"
 			foutput += "</div>\n"
 			previousComments = ""
 			// if name is exported, we document it, othwerise, it is subject to change.
-		//	if fname[0] >= 'A' && fname[0] <= 'Z' {
-				output += foutput
-				funcIndex += "<li><a href=\"#" + string(fname) + "\">" + string(fname) + "</a></li>"
-				fmt.Println("found method:" + string(fname))
-		//	} else {
-		//		fmt.Println("found undocumented method:" + string(fname))
-		//	}
+			//	if fname[0] >= 'A' && fname[0] <= 'Z' {
+			output += foutput
+			funcIndex += "<li><a href=\"#" + string(fname) + "\">" + string(fname) + "</a></li>"
+			fmt.Println("found method:" + string(fname))
+			//	} else {
+			//		fmt.Println("found undocumented method:" + string(fname))
+			//	}
 
 		}
-		if strings.HasPrefix(line, "import") {
-			fileInfo = previousComments
+		if strings.HasPrefix(line, "Desc") {
+			fileInfo += previousComments[5:]
 			previousComments = ""
 		}
 	}
 	funcIndex = "<ul>" + funcIndex + "</ul>"
 	fname := path.Base(fileName)
 	header := "<h1>" + fname + "</h1>" + fileInfo + "<br/><br/>" + funcIndex + "<br/><br/>"
-	return header + output
+	footer := "<a href=\"index.html\" style=\"padding-bottom: 21px;\">Back to index</a>"
+	return header + output + footer
 
 }
