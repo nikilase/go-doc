@@ -57,6 +57,8 @@ func ParseFile(fileName string) string {
 	lines := strings.Split(string(dat), "\n")
 	previousComments := ""
 	fileInfo := ""
+	ab := strings.Split(fileName, "SensorWebsite\\")
+	fmt.Println(ab[1])
 
 	re := regexp.MustCompile("^func(\\s+\\([^)]*\\))* ")
 	re2 := regexp.MustCompile("\\(.*")
@@ -93,7 +95,7 @@ func ParseFile(fileName string) string {
 			foutput += previousComments
 			foutput += "<br>"
 			foutput += "<code>" + mline + "</code>\n"
-			foutput += "<a href=https://github.com/nikilase/SensorWebsite/tree/master/" + fileName[48:] + "#L" + strconv.Itoa(i) + " target=\"_blank\">" + fileName[14:] + "#L" + strconv.Itoa(i) + "</a><br>"
+			foutput += "<a href=https://github.com/nikilase/SensorWebsite/tree/master/" + ab[1] + "#L" + strconv.Itoa(i) + " target=\"_blank\">" + fileName[14:] + "#L" + strconv.Itoa(i) + "</a><br>"
 			foutput += "</p>\n"
 			foutput += "</div>\n"
 			previousComments = ""
