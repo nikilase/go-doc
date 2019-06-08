@@ -32,7 +32,7 @@ func ParseFolder(i_folder string, o_folder string, depth int, list *string) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	*list += "<ul>" + o_folder[3:]
+	*list += "<ul>"
 	for _, f := range files {
 		if strings.HasSuffix(f.Name(), ".go") {
 			htmlHeader := "<!DOCTYPE html>\n<html><head><title> go-doc Documentation</title>"

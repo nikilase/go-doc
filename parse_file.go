@@ -45,8 +45,9 @@ func highlight(mline string) string {
 		mline = strings.Replace(mline, " "+builtins[i]+" ", link+" ", -1)
 	}
 
-	// highlight revel.Result
+	// highlight revel.
 	mline = strings.Replace(mline, "revel.Result" , "<a href='https://godoc.org/github.com/revel/revel#Result'>revel.Result</a>" , -1)
+	mline = strings.Replace(mline, "revel.Controller" , "<a href='https://godoc.org/github.com/revel/revel#Controller'>revel.Controller</a>" , -1)
 	return mline
 }
 
@@ -67,6 +68,7 @@ func ParseFile(fileName string) string {
 
 	re := regexp.MustCompile("^func(\\s+\\([^)]*\\))* ")
 	re2 := regexp.MustCompile("\\(.*")
+	t_re := regexp.MustCompile("type |struct.*")
 	funcIndex := ""
 	for i := range lines {
 		line := lines[i]
@@ -83,7 +85,31 @@ func ParseFile(fileName string) string {
 			previousComments = ""
 		}
 		if strings.HasPrefix(line, "type") {
+			tname := []byte(line)
+			tname = t_re.ReplaceAll(tname, []byte(""))
+
+			mline := strings.Replace(line, " {", " ", -1)
+			mline = highlight(mline)
+			toutput := ""
+			toutput += "<a name='" + string(tname) + "'></a><h2>type " + string(tname) + "</h2>\n"
+			toutput += "<div class=blk>\n"
+			toutput += "<p>"
+			previousComments = highlight(previousComments)
+			toutput += previousComments
+			toutput += "<br>"
+			toutput += "<code>" + mline + "</code>\n"
+			toutput += "<a href=https://github.com/nikilase/SensorWebsite/tree/master/" + ab[1] + "#L" + strconv.Itoa(i) + " target=\"_blank\">" + fileName[14:] + "#L" + strconv.Itoa(i) + "</a><br>"
+			toutput += "</p>\n"
+			toutput += "</div>\n"
 			previousComments = ""
+			// if name is exported, we document it, othwerise, it is subject to change.
+			//	if fname[0] >= 'A' && fname[0] <= 'Z' {
+			output += toutput
+			funcIndex += "<li><a href=\"#" + string(tname) + "\">type " + string(tname) + "</a></li>"
+			fmt.Println("found type:" + string(tname))
+			//	} else {
+			//		fmt.Println("found undocumented method:" + string(fname))
+			//	}
 		}
 
 		if strings.HasPrefix(line, "func") {
@@ -94,9 +120,10 @@ func ParseFile(fileName string) string {
 			mline := strings.Replace(line, " {", " ", -1)
 			mline = highlight(mline)
 			foutput := ""
-			foutput += "<a name='" + string(fname) + "'></a><h2>" + string(fname) + "</h2>\n"
+			foutput += "<a name='" + string(fname) + "'></a><h2>func " + string(fname) + "</h2>\n"
 			foutput += "<div class=blk>\n"
 			foutput += "<p>"
+			previousComments = highlight(previousComments)
 			foutput += previousComments
 			foutput += "<br>"
 			foutput += "<code>" + mline + "</code>\n"
@@ -107,7 +134,7 @@ func ParseFile(fileName string) string {
 			// if name is exported, we document it, othwerise, it is subject to change.
 			//	if fname[0] >= 'A' && fname[0] <= 'Z' {
 			output += foutput
-			funcIndex += "<li><a href=\"#" + string(fname) + "\">" + string(fname) + "</a></li>"
+			funcIndex += "<li><a href=\"#" + string(fname) + "\">func " + string(fname) + "</a></li>"
 			fmt.Println("found method:" + string(fname))
 			//	} else {
 			//		fmt.Println("found undocumented method:" + string(fname))
