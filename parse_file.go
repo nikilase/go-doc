@@ -40,8 +40,13 @@ func highlight(mline string) string {
 
 	for i := range builtins {
 		link := " <a href='https://golang.org/pkg/builtin/#" + builtins[i] + "'>" + builtins[i] + "</a>"
-		mline = strings.Replace(mline, " "+builtins[i], link, -1)
+		mline = strings.Replace(mline, " "+builtins[i]+",", link+",", -1)
+		mline = strings.Replace(mline, " "+builtins[i]+")", link+")", -1)
+		mline = strings.Replace(mline, " "+builtins[i]+" ", link+" ", -1)
 	}
+
+	// highlight revel.Result
+	mline = strings.Replace(mline, "revel.Result" , "<a href='https://godoc.org/github.com/revel/revel#Result'>revel.Result</a>" , -1)
 	return mline
 }
 
@@ -86,7 +91,7 @@ func ParseFile(fileName string) string {
 			fname = re.ReplaceAll(fname, []byte(""))
 			fname = re2.ReplaceAll(fname, []byte(""))
 
-			mline := strings.Replace(line, "{", "", -1)
+			mline := strings.Replace(line, " {", " ", -1)
 			mline = highlight(mline)
 			foutput := ""
 			foutput += "<a name='" + string(fname) + "'></a><h2>" + string(fname) + "</h2>\n"
