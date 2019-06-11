@@ -70,5 +70,6 @@ func ParseFolder(i_folder string, o_folder string, depth int, list *string) {
 			}
 		}
 	}
+	*list += "<li><a href=\"graph.js.html\">graph.js</a></li>\n"
 	*list += "</ul>"
 }
