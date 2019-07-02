@@ -54,6 +54,8 @@ func highlight(mline string) string {
 // ParseFile parses files
 // more comments here
 func ParseFile(fileName string) string {
+	pathBeforeFileNameLength := 33
+
 	dat, err := ioutil.ReadFile(fileName)
 	output := ""
 	if err != nil {
@@ -98,7 +100,7 @@ func ParseFile(fileName string) string {
 			toutput += previousComments
 			toutput += "<br>"
 			toutput += "<code>" + mline + "</code>\n"
-			toutput += "<a href=https://github.com/nikilase/SensorWebsite/tree/master/" + ab[1] + "#L" + strconv.Itoa(i) + " target=\"_blank\">" + fileName[14:] + "#L" + strconv.Itoa(i) + "</a><br>"
+			toutput += "<a href=https://github.com/nikilase/SensorWebsite/tree/master/" + ab[1] + "#L" + strconv.Itoa(i) + " target=\"_blank\">" + fileName[pathBeforeFileNameLength:] + "#L" + strconv.Itoa(i) + "</a><br>"
 			toutput += "</p>\n"
 			toutput += "</div>\n"
 			previousComments = ""
@@ -127,7 +129,7 @@ func ParseFile(fileName string) string {
 			foutput += previousComments
 			foutput += "<br>"
 			foutput += "<code>" + mline + "</code>\n"
-			foutput += "<a href=https://github.com/nikilase/SensorWebsite/tree/master/" + ab[1] + "#L" + strconv.Itoa(i) + " target=\"_blank\">" + fileName[14:] + "#L" + strconv.Itoa(i) + "</a><br>"
+			foutput += "<a href=https://github.com/nikilase/SensorWebsite/tree/master/" + ab[1] + "#L" + strconv.Itoa(i) + " target=\"_blank\">" + fileName[pathBeforeFileNameLength:] + "#L" + strconv.Itoa(i) + "</a><br>"
 			foutput += "</p>\n"
 			foutput += "</div>\n"
 			previousComments = ""
